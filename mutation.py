@@ -13,10 +13,11 @@ import os
 # May want to work around this to avoid the import
 from Bio import SeqIO
 
+from config import TEMP_DIR
 
 PATH_TO_ENSEMBL_REF = '/cellar/users/ramarty/Data/hla_ii/' \
                        + 'references/Homo_sapiens.GRCh38.pep.all.fa'
-TEMP_DIR = '/cellar/users/ramarty/Data/pypresent/tmp/'
+#TEMP_DIR = '/cellar/users/ramarty/Data/pypresent/tmp/'
 INPUT_FASTA_EXTENSION_I = 10 # class I
 INPUT_FASTA_EXTENSION_II = 14 # class II
 

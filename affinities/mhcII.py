@@ -36,6 +36,8 @@ def run_netmhcIIpan31(allele, mutation):
                                                                    mutation.restricted_fasta_fileII,
                                                                     raw_affinities_file,
                                                                     trash_file)
+    # For better debug
+    print("Running command: ", cmd)
     os.system(cmd)
 
     # Alter output file

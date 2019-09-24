@@ -23,12 +23,12 @@ And the following Python modules:
 2. [Scipy](https://www.scipy.org/)
 3. [Bio](https://biopython.org/)
 
-*[Anaconda](https://www.anaconda.com/download) makes downloading the python modules easy*
+*[Anaconda](https://www.anaconda.com/download) makes downloading the python modules easy*, you can install necessary environment from `pypresent.yml` file.
 
 Setup 
 ---------
 1. Clone repository locally.
-2. Download NetMHCpan and NetMHCIIpan. 
+2. Download NetMHCpan and NetMHCIIpan, install them by following software README, run test to check if they work (`gawk` is required). 
 3. Update paths for NetMHCpan, NetMHCIIpan and a temporary directory in the config.py file.
 4. Download python modules. 
 5. Run example_usage.ipynb. The scores should be as follows:
