@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 
 # Update these paths according to your netMHCpan/netMHCIIpan downloads
 NETMHCPAN40_PATH = '/Users/wsx/biosoft/netMHCpan-4.0/netMHCpan'
@@ -15,3 +16,12 @@ def setup_MHCI():
 
 def setup_MHCII():
     return NETMHCIIPAN32_PATH, TEMP_DIR
+
+
+def check(obj):
+    """
+    Check all property for a object
+    :param obj: a object
+    :return: a pretty dictionary
+    """
+    pprint(vars(obj))

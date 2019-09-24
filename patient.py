@@ -35,7 +35,7 @@ class Patient:
     def patient_score(self, mutation, mhc_class='I',
                       allele_scoring_function='best_rank',
                       patient_scoring_function='harmonic_mean',
-                      software='netMHCpan30'):
+                      software='netMHCpan30', verbose=False):
         """
         Calculation of a residue centric presentation score for
         a patient
@@ -55,9 +55,9 @@ class Patient:
             types = self.hla_II_types
         for hla in types:
             if mhc_class == 'I':
-                affinity_data_file = mhcI.run_netmhcpan30(hla, mutation)
+                affinity_data_file = mhcI.run_netmhcpan30(hla, mutation, verbose=verbose)
             elif mhc_class == 'II':
-                affinity_data_file = mhcII.run_netmhcIIpan31(hla, mutation)
+                affinity_data_file = mhcII.run_netmhcIIpan31(hla, mutation, verbose=verbose)
             else:
                 raise Exception('Please select an available software.')
 

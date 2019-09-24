@@ -16,7 +16,7 @@ import config
 
 NETMHCPAN30_PATH, TEMP_DIR = config.setup_MHCI()
 
-def run_netmhcpan30(allele, mutation):
+def run_netmhcpan30(allele, mutation, verbose=False):
     """
     To run netMHCpan3.0 and return a cleaned dataframe
     :param allele: an Allele object
@@ -38,7 +38,9 @@ def run_netmhcpan30(allele, mutation):
                                                                     raw_affinities_file,
                                                                     trash_file)
     # For better debug
-    print("Running command: ", cmd)
+    if verbose:
+        print("Running command: ", cmd)
+        
     os.system(cmd)
 
     # Alter output file

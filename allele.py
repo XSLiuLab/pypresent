@@ -29,7 +29,7 @@ class Allele:
                 print("Please specify an allele name or an input file.")
 
 
-    def allele_score(self, mutation, scoring_function='best_rank'):
+    def allele_score(self, mutation, scoring_function='best_rank', verbose=False):
         """
         Calculation of a residue centric presentation score for
         a single allele
@@ -43,10 +43,10 @@ class Allele:
         # Run the affinity prediction
         if self.mhc_class == 'I':
             software = 'netMHCpan30'
-            affinity_data_file = mhcI.run_netmhcpan30(self, mutation)
+            affinity_data_file = mhcI.run_netmhcpan30(self, mutation, verbose=verbose)
         elif self.mhc_class == 'II':
             software = 'netMHCIIpan31'
-            affinity_data_file = mhcII.run_netmhcIIpan31(self, mutation)
+            affinity_data_file = mhcII.run_netmhcIIpan31(self, mutation, verbose=verbose)
         else:
             raise Exception('Please select a class with an available software.')
 

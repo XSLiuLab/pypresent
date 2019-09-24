@@ -16,7 +16,7 @@ import config
 
 NETMHCIIPAN31_PATH, TEMP_DIR = config.setup_MHCII()
 
-def run_netmhcIIpan31(allele, mutation):
+def run_netmhcIIpan31(allele, mutation, verbose=False):
     """
     To run netMHCIIpan3.1 and return a cleaned dataframe
     :param allele: an Allele object
@@ -37,7 +37,9 @@ def run_netmhcIIpan31(allele, mutation):
                                                                     raw_affinities_file,
                                                                     trash_file)
     # For better debug
-    print("Running command: ", cmd)
+    if verbose:
+        print("Running command: ", cmd)
+        
     os.system(cmd)
 
     # Alter output file
