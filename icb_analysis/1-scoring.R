@@ -26,6 +26,7 @@ aI$allele_score(mut)
 # Scoring -----------------------------------------------------------------
 
 
+
 # mut = Mutation(21, 'K', from_file=False, gene_sequence=sequence, native_aa='P', id='OR5AC1_P21K')
 # 
 # 
