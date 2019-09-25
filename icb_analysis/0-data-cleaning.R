@@ -21,10 +21,6 @@ van2015.mut = van2015.mut %>%
          Reference_Allele, Tumor_Seq_Allele2) %>% 
   filter(!is.na(Hugo_Symbol))
 
-write_csv(van2015, "van2015_sample.csv")
-write_csv(van2015.mut, "van2015_mutation.csv")
-
-
 snyder2017 = read_csv("data/Snyder2017_clinical.csv")
 snyder2017 = snyder2017 %>% 
   select(patient_id, hla_allele_list) %>% 
@@ -56,5 +52,50 @@ snyder2017.mut = snyder2017.mut %>%
          Reference_Allele, Tumor_Seq_Allele2) %>% 
   filter(!is.na(Hugo_Symbol))
 
-write_csv(snyder2017, "snyder2017_sample.csv")
-write_csv(snyder2017.mut, "snyder2017_mutation.csv")
+
+ph = bind_rows(van2015 %>% 
+                 mutate(study="Van2015"),
+               snyder2017 %>% 
+                 mutate(study="snyder2017"))
+
+write_csv(ph, path = "phenotype.csv")
+
+mut = bind_rows(van2015.mut, snyder2017.mut %>% 
+                  mutate(patient = as.character(patient),
+                         Chromosome = as.character(Chromosome))) %>% 
+  filter(Chromosome %in% c(1:22, "X", "Y"))
+
+library(BSgenome.Hsapiens.UCSC.hg19)
+Hsapiens
+
+vep_mut = mut %>% 
+  mutate_if(is.numeric, as.integer)
+
+ref = getSeq(Hsapiens, 
+             paste0("chr", vep_mut$Chromosome), 
+             start = vep_mut$Start_position,
+             end = vep_mut$End_position)
+
+ref_seq = as.character(ref)
+vep_mut = vep_mut %>% 
+  mutate(ref = ref_seq)
+
+all(vep_mut$Reference_Allele == vep_mut$ref)
+# So all mutation are based on strand "+"
+
+vep_mut = vep_mut %>% 
+  mutate(
+    chromosome = Chromosome,
+    start = Start_position,
+    end = End_position,
+    allele = paste(Reference_Allele, Tumor_Seq_Allele2, sep = "/"),
+    strand = "+",
+    identifier = paste(patient, Chromosome, Start_position, sep = "-")
+  ) %>% 
+  select(chromosome, start, end, allele, strand, identifier)
+
+vep_mut = vep_mut %>% 
+  arrange(chromosome, start)
+
+write_tsv(vep_mut, path = "vep_input.tsv", col_names = FALSE)
+# Submit this data to VEP web
