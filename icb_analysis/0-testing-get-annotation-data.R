@@ -35,6 +35,7 @@ getBM(c("hgnc_symbol", "chromosome_name", "strand",
 #                                    gunzip = TRUE)
 # 
 # 
+
 download.file("ftp://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/pep/Homo_sapiens.GRCh37.75.pep.all.fa.gz",
               destfile = "proteomes/Homo_sapiens.GRCh37.75.pep.all.fa.gz")
 system("gunzip proteomes/Homo_sapiens.GRCh37.75.pep.all.fa.gz")
