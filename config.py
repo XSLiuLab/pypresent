@@ -2,11 +2,11 @@ import os
 from pprint import pprint
 
 # Update these paths according to your netMHCpan/netMHCIIpan downloads
-NETMHCPAN40_PATH = '/Users/wsx/biosoft/netMHCpan-4.0/netMHCpan'
-NETMHCIIPAN32_PATH = '/Users/wsx/biosoft/netMHCIIpan-3.2/netMHCIIpan'
+NETMHCPAN40_PATH = '/public/tools/netMHC/netMHCpan-4.0/netMHCpan'
+NETMHCIIPAN32_PATH = '/public/tools/netMHC/netMHCIIpan-3.2/netMHCIIpan'
 
 # Update based on your desired tmp directory
-TEMP_DIR = '/tmp/netMHC/'
+TEMP_DIR = '/home/wsx/tmp/netMHC/'
 
 if not os.path.exists(TEMP_DIR):
     os.makedirs(TEMP_DIR)

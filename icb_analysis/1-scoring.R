@@ -1,9 +1,11 @@
 library(reticulate)
-use_condaenv(condaenv = "pypresent", required = TRUE)
+library(tidyverse)
+use_condaenv(condaenv = "pypresent", required = TRUE, conda = "/opt/anaconda3/bin/conda")
 # py_config()
 bt = import_builtins()
 sys = import("sys")
-sys$path = c(sys$path, '/Users/wsx/Documents/GitHub/pypresent/')
+#sys$path = c(sys$path, '/Users/wsx/Documents/GitHub/pypresent/')
+sys$path = c(sys$path, '/home/wsx/projects/pypresent/')  # Must use absolute path
 
 mutation = import("mutation")
 allele = import("allele")
@@ -19,7 +21,7 @@ mut = Mutation(20L, 'H', from_file = TRUE,
                id = 'OR5AC1_X20K', native_aa = "H")
 mut
 aI = Allele('HLA-A01:01', mhc_class='I')
-aI$allele_score(mut)
+aI$allele_score(mut, verbose = TRUE)
 
 allelesI = c('HLA-A11:01', 'HLA-A31:35', 'HLA-B07:02', 'HLA-B40:30', 'HLA-C06:19', 'HLA-C07:07')
 p = Patient(allelesI, list())
@@ -77,12 +79,12 @@ RES = vep_mutation %>%
 
 save(RES, file = "RES.RData")
 
-
+load("RES.RData")
 # Scan all variants and score them
 # elf, residue, aa, from_file=True, gene_fasta_file='', gene_sequence='',
 # id='mutationID', native_aa=None, native=False
 
-scoring = function(AA_position, AA, Seqs, id, HLA) {
+scoring = function(AA_position, AA, Seqs, id, HLA, Run=1) {
   # AA_postion is an integer
   AA = ifelse(nchar(AA) == 1, AA, substr(AA, 3, 3))
   #sed -n '/^>ENSP00000317992/,/>/p' Homo_sapiens.GRCh37.75.pep.all.fa | grep -v '>'
@@ -103,11 +105,10 @@ scoring = function(AA_position, AA, Seqs, id, HLA) {
       p = Patient(HLA, list())
       p$patient_score(mut, mhc_class='I')
     }, error = function(e) {
-      cat(AA_position, "vs", nchar(Seqs), "\n", sep = " ", file = "run.log", append = TRUE)
       NA
     }
   )
-  cat(id, paste0(score, "\n"), file = "run.tsv", sep = "\t", append = TRUE)
+  cat(Run, id, paste0(score, "\n"), file = "run.tsv", sep = "\t", append = TRUE)
   score
 }
 
@@ -145,15 +146,34 @@ system.time(
 library(parallel)
 system.time(
   {
-    #nbs = nrow(RES)
-    nbs = 10
-    PHBR = mcmapply(scoring, AA_position = as.integer(RES$Protein_position)[1:nbs],
+    nbs = nrow(RES)
+    #nbs = 10
+    PHBR = mcmapply(scoring, 
+                    AA_position = as.integer(RES$Protein_position)[1:nbs],
                     AA = RES$Amino_acids[1:nbs],
                     Seqs = RES$Seqs[1:nbs],
                     id = RES$variant_id[1:nbs],
-                    HLA =RES$HLA[1:nbs], mc.cores = 6)
+                    HLA =RES$HLA[1:nbs],
+                    Run = 1:nbs,
+                    mc.cores = 20)
   }
 )
 
-#save(PHBR, file = "PHBR.RData")
+save(PHBR, file = "PHBR.RData")
 
+RES = RES %>% 
+  mutate(PHBR = PHBR)
+
+# Keep the best for each variant
+# Get median PHBR score for each patient
+ICB_PHBR_I = RES %>% 
+  group_by(variant_id) %>% 
+  summarise(study = unique(study),
+            patient = unique(patient), 
+            PHBR = max(PHBR, na.rm = TRUE)) %>% 
+  group_by(study, patient) %>% 
+  summarise(PHBR_I = median(PHBR)) %>% 
+  ungroup() %>% 
+  mutate(PHBR_I = ifelse(PHBR_I < 0, 0, PHBR_I))
+
+save(ICB_PHBR_I, file = "ICB_PHBR_I.RData")
